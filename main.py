@@ -1,7 +1,7 @@
 import csv
 import random
 import math
-
+import matplotlib.pyplot as plt
 
 Xs = []
 Ys = []
@@ -19,7 +19,20 @@ with open("synthetic_data.csv","r") as f:
 
 
 NUM_SAMPLES = len(Xs)
-BATCH_SIZE = 1
+BATCH_SIZE = 30
+TEST = .2 #Proportion of examples to be in test set
+RECORD = False #Whether or not to record accuracy throughout epochs
+
+test_ids = set(random.sample(list(range(NUM_SAMPLES)),int(NUM_SAMPLES*TEST)))
+Xtest,Ytest = [],[]
+Xtrain,Ytrain = [],[]
+for i in range(NUM_SAMPLES):
+    if i in test_ids:
+        Xtest.append(Xs[i])
+        Ytest.append(Ys[i])
+    else:
+        Xtrain.append(Xs[i])
+        Ytrain.append(Ys[i])
 
 ALPHA = 0.1
 def LReLu(v):
@@ -103,13 +116,14 @@ def forward(inp): #Forward propagation, returns prediction, and activated parts
 
     return (inp,As)
 
-
+train_acc = []
+test_acc = []
 for i in range(EPOCHS):
 
-    indices = list(range(NUM_SAMPLES))
+    indices = list(range(len(Xtrain)))
     random.shuffle(indices)
     for ii in indices:
-        x, y = Xs[ii], Ys[ii]
+        x, y = Xtrain[ii], Ytrain[ii]
         pred,As = forward(x)
         dL_dz3 = pred-y
 
@@ -131,9 +145,29 @@ for i in range(EPOCHS):
         weights[0] = mat_op(weights[0], mat_scale(dL_dw1, LEARNING_RATE/BATCH_SIZE), "-")
         biases[0] = mat_op(biases[0], mat_scale(dL_db1, LEARNING_RATE/BATCH_SIZE), "-")
 
+    if RECORD:
+        correct = 0
+        for i in range(len(Xtrain)):
+            correct+=1 if round(forward(Xtrain[i])[0])==Ytrain[i] else 0
+        train_acc.append(correct/len(Xtrain))
+
+        correct = 0
+        for i in range(len(Xtest)):
+            correct += 1 if round(forward(Xtest[i])[0]) == Ytest[i] else 0
+        test_acc.append(correct / len(Xtest))
+
+if RECORD:
+    plt.plot([i for i in range(1,EPOCHS+1)],train_acc,color='red',label='Training Set Accuracy')
+    plt.plot([i for i in range(1,EPOCHS+1)],test_acc,color='blue',label='Test Set Accuracy')
+    plt.xlabel('Epoch')
+    plt.ylabel('Accuracy')
+    plt.title("Training Set and Testing Set Accuracy")
+    plt.legend()
+
+    plt.show()
 
 correct = 0
-for i in range(NUM_SAMPLES):
-    correct+=1 if round(forward(Xs[i])[0])==Ys[i] else 0
-print(f"Accuracy: {100*correct/NUM_SAMPLES:.2f}%")
+for i in range(len(Xtest)):
+    correct+=1 if round(forward(Xtest[i])[0])==Ytest[i] else 0
+print(f"Test Accuracy: {100*correct/len(Xtest):.2f}%")
 
