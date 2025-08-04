@@ -1,10 +1,18 @@
-A simple multi layer perceptron neural network made from scratch with no libraries. Can get ~ 80-90% accuracy
+A 2 hidden layer multiclass classificationNeural Network implemented fully from scratch in Python 
+
+(No TF, no pytorch, and (probably in poor judgement) no numpy)
+
+##### Data: ##### 
+- 20 features
+- 4 classes
+- 5000 examples
+- Synthetically generated with noise
 
 #### Accuracy Plot ####
 
-![](media/Figure_1.png)
+![](https://github.com/hdsjejgh/NeuralNetworkFromScratch/blob/4bc217b6a65b78ef6ea6b6534d33e5e90d40ad24/media/Figure_2.png)
 
 
 #### The Work ####
-
-![](media/2025_06_17_0vo_Kleki.png)
+(I really did not have to do like half of this)
+![](https://github.com/hdsjejgh/NeuralNetworkFromScratch/blob/4bc217b6a65b78ef6ea6b6534d33e5e90d40ad24/media/2025_08_03_111_Kleki.png)
